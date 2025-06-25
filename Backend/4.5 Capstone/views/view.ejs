@@ -1,0 +1,33 @@
+<%- include("partials/header.ejs") %>
+
+<h1><%= entryTitle %></h1>
+
+<% if (editMode) { %>
+  <form action="/edit" method="POST">
+    <input type="hidden" name="filename" value="<%= filename %>">
+    <label for="entryTitle">Title:</label><br>
+    <input type="text" id="entryTitle" name="entryTitle" value="<%= entryTitle %>" required><br><br>
+    <label for="entryBody">Body:</label><br>
+    <textarea id="entryBody" name="entryBody" rows="20" style="width: 100%;" required><%= entryBody %></textarea><br><br>
+    <button type="submit">Save Changes</button>
+    <a href="/view/<%= filename %>">Cancel</a>
+  </form>
+
+<% } else { %>
+  <pre class="long-text"><%= entryBody %></pre>
+  <a href="/view/<%= filename %>?edit=true">Edit</a>
+  <a href="#" onclick="confirmDelete('<%= filename %>')">Delete</a>
+<form id="deleteForm" action="/delete/<%= filename %>" method="POST" style="display:none;"></form>
+
+<script>
+  function confirmDelete(filename) {
+    if (confirm(`Are you sure you want to delete "${filename}"? This cannot be undone.`)) {
+      document.getElementById('deleteForm').submit();
+    }
+  }
+</script>
+<% } %>
+
+<p><a href="/">Back to entries</a></p>
+
+<%- include("partials/footer.ejs") %>
