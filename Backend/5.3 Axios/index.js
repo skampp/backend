@@ -4,7 +4,7 @@ import axios from "axios";
 
 const app = express();
 const port = 3000;
-
+let data;
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -25,7 +25,18 @@ app.get("/", async (req, res) => {
 });
 
 app.post("/", async (req, res) => {
-  console.log(req.body);
+  try {
+    const userResponse = await axios.get("https://bored-api.appbrewery.com/filter?type=" + req.body.type + "&participants=" + req.body.participants);
+    const userResult = userResponse.data;
+    let rndActivity = Math.floor(Math.random()*userResult.length);
+    res.render("index.ejs", { bActivity: userResult[rndActivity].activity, bType: userResult[rndActivity].type, bParticipants: userResult[rndActivity].participants });
+  // console.log(userResult[rndActivity]);
+  } catch(error) {
+    console.error("Failed to make request:", error.message);
+    res.render("index.ejs", {
+      error: error.message,
+    });
+  }
 
   // Step 2: Play around with the drop downs and see what gets logged.
   // Use axios to make an API request to the /filter endpoint. Making
