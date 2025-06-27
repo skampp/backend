@@ -28,6 +28,7 @@ app.get("/", async (req, res) => {
 //in the card under the form.
 app.post("/", async (req, res) => {
   try {
+    //She did a const type = req.body.type and a const participants - req.body.participants;
     const userResponse = await axios.get("https://bored-api.appbrewery.com/filter?type=" + req.body.type + "&participants=" + req.body.participants);
     const userResult = userResponse.data; //Why can't I just use userResponse.data.activity?  Would that work, but this is cleaner?  This is just the pattern I learned.
     let rndActivity = Math.floor(Math.random()*userResult.length); //the LET statement scopes rndActivity to this block I think.
