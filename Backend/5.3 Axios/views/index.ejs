@@ -33,6 +33,7 @@
       </select>
       <button type="submit" class="form-submit">Go</button>
     </form>
+    <!-- Pasting this below for reference -->
     <!-- { bActivity: userResult[rndActivity].activity, bType: userResult[rndActivity].type, bParticipants: userResult[rndActivity].participants }); -->
     <section id="cards" class="cards">
       <article class="card-item">
@@ -58,18 +59,6 @@
             No activities that match your criteria.
             
           </h2>
-          <div class="card-info">
-            <span class="card-type">
-              <!-- Show Activity type -->
-               
-            </span>
-            <span class="card-participants">
-              <!-- participants: Show participant number -->
-               
-              <span class="card-number"></span>
-            </span>
-          </div>
-
           <% } %>
         </article>
         
@@ -77,7 +66,7 @@
       <div id="tag-error" class="tag-error">
         <!-- Show any errors that were sent from the backend -->
          <% if (locals.error) { %>
-           Errors: <%= error %>
+           Error: <%= error %>
            <% } %>
       </div>
 

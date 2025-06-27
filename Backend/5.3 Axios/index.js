@@ -8,9 +8,8 @@ let data;
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Step 1: Make sure that when a user visits the home page,
-//   it shows a random activity.You will need to check the format of the
-//   JSON data from response.data and edit the index.ejs file accordingly.
+//When the user loads the page for the first time, a random activity is called and returned,
+//then displayed on index.ejs.
 app.get("/", async (req, res) => {
   try {
     const response = await axios.get("https://bored-api.appbrewery.com/random");
@@ -24,28 +23,22 @@ app.get("/", async (req, res) => {
   }
 });
 
+//When the user makes any selections in the form on index.ejs, they are POSTed to here.  A random entry
+//that matches their criteria is then send back to index.ejs with those results, where they are populated
+//in the card under the form.
 app.post("/", async (req, res) => {
   try {
     const userResponse = await axios.get("https://bored-api.appbrewery.com/filter?type=" + req.body.type + "&participants=" + req.body.participants);
-    const userResult = userResponse.data;
-    let rndActivity = Math.floor(Math.random()*userResult.length);
+    const userResult = userResponse.data; //Why can't I just use userResponse.data.activity?  Would that work, but this is cleaner?  This is just the pattern I learned.
+    let rndActivity = Math.floor(Math.random()*userResult.length); //the LET statement scopes rndActivity to this block I think.
     res.render("index.ejs", { bActivity: userResult[rndActivity].activity, bType: userResult[rndActivity].type, bParticipants: userResult[rndActivity].participants });
-  // console.log(userResult[rndActivity]);
-  } catch(error) {
+    //In the statement above, should I have done a 'let newVar = userResult[rndActivity]' and then used newVar in the result parameters?
+    } catch(error) {
     console.error("Failed to make request:", error.message);
     res.render("index.ejs", {
       error: error.message,
     });
   }
-
-  // Step 2: Play around with the drop downs and see what gets logged.
-  // Use axios to make an API request to the /filter endpoint. Making
-  // sure you're passing both the type and participants queries.
-  // Render the index.ejs file with a single *random* activity that comes back
-  // from the API request.
-  // Step 3: If you get a 404 error (resource not found) from the API request.
-  // Pass an error to the index.ejs to tell the user:
-  // "No activities that match your criteria."
 });
 
 app.listen(port, () => {
