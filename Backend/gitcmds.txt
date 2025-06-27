@@ -1,0 +1,6 @@
+git pull origin main
+	(do my work and save)
+git status
+git add .
+git commit -a -m "Complete 5.2, add _Notes"
+git push -u origin main
