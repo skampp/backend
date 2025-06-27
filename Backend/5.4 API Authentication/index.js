@@ -50,7 +50,7 @@ app.get("/basicAuth", async (req, res) => {
 
 app.get("/apiKey", async (req, res) => {
   try {
-    const myURL = "https://secrets-api.appbrewery.com/filter";
+    const myURL = API_URL + "filter";
     const response = await axios.get(myURL, {
       params: {
         //Query Parameters
@@ -75,7 +75,7 @@ const config = {
 
 app.get("/bearerToken", async (req, res) => {
   try {
-    const myURL = "https://secrets-api.appbrewery.com/secrets/2";
+    const myURL = API_URL + "secrets/2";
     const response = await axios.get(myURL, config);
     res.render("index.ejs", { content: JSON.stringify(response.data) });
   } catch (error) {
