@@ -1,7 +1,6 @@
 {
-  "name": "5.6-secrets-project",
+  "name": "5.7-external-api",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -10,9 +9,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "description": "",
   "dependencies": {
-    "axios": "^1.4.0",
-    "body-parser": "^2.2.0",
+    "body-parser": "^1.20.3",
     "ejs": "^3.1.10",
     "express": "^4.21.2"
   }
