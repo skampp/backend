@@ -1,5 +1,11 @@
-<body>
-    
-    
-    <%= content %>
-</body>
+//   console.log(`${index + 1}. ${player.name} (${player.position}) - Age: ${player.age}`);
+
+<% if (locals.content && content.length > 0) { %>
+  <ul>
+    <% content.forEach((item, i) => { %>
+      <li><%= i + 1 %>. <%= item.player.name %>, <%= item.player.position %>, <%= item.player.age %>,</li>
+    <% }) %>
+  </ul>
+<% } else { %>
+  <p>No player data available.</p>
+<% } %>

@@ -1,0 +1,26 @@
+<body>
+
+<% if(locals.content) { %>
+    <ul>
+<% content.forEach((item, i) => { %>
+     <li> <%=i%>. <%=content[i].indexTerms.scientificname %>, <%=content[i].indexTerms.kingdom %>, <%=content[i].indexTerms.stateprovince %></li>
+<%    }); %>
+<%}%>
+</ul>
+
+
+    <form action="/" id="form" class="form" method="POST">
+      <select name="stateprovince" class="form-select">
+        <option value="" data-display="Select">Choose State</option>
+        <option value="new york">New York</option>
+        <option value="maryland">Maryland</option>
+      </select>
+      <select name="kingdom" class="form-select">
+        <option value="">Choose kingdom</option>
+        <option value="plantae">Plantae</option>
+        <option value="animalia">Animalia</option>
+      </select>
+      <button type="submit" class="form-submit">Go</button>
+    </form>
+
+</body>
