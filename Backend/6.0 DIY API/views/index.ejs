@@ -1,0 +1,48 @@
+<h1>
+  <% if (locals.myJokes) { %> <%= myJokes.id - 1 %>. <%= myJokes.jokeText %> <% } %>
+</h1>
+
+<form action="/" id="form" class="form" method="GET">
+  <button type="submit" class="form-submit">Main</button>
+</form>
+
+<form action="/random" id="form" class="form" method="GET">
+  <button type="submit" class="form-submit">Random</button>
+</form>
+
+<form action="/specific" method="POST">
+  <input type="text" name="jokeNum" placeholder="Joke ID" />
+  <input type="submit" value="OK" />
+</form>
+
+<form action="/specific2" method="POST">
+  <input type="text" name="id" placeholder="Joke ID v2" />
+  <input type="submit" value="OK v2" />
+</form>
+
+<form action="/filter" id="form" class="form" method="POST">
+  <select name="searchType" class="form-select">
+    <option value="" data-display="Select">Joke Type</option>
+    <option value="Science">Science</option>
+    <option value="Puns">Puns</option>
+    <option value="Wordplay">Wordplay</option>
+    <option value="Math">Math</option>
+    <option value="Food">Food</option>
+    <option value="Sports">Sports</option>
+    <option value="Movies">Movies</option>
+  </select>
+  <button type="submit" class="form-submit">Specific</button>
+</form>
+
+<form action="/jokes" method="POST">
+  <input type="text" name="text" placeholder="Enter joke" />
+  <input type="text" name="type" placeholder="Pun" />
+  <input type="submit" value="New Joke" />
+</form>
+
+<form action="/jokesput" method="POST">
+    <input type="text" name="id" placeholder="Enter joke #" />
+    <input type="text" name="text" placeholder="Enter joke" />
+  <input type="text" name="type" placeholder="Pun" />
+  <input type="submit" value="Update Joke" />
+</form>

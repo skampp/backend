@@ -11,6 +11,7 @@ const port = 3000;
 const API_URL = "https://search.idigbio.org/v2/search/records";
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static("public"));
 
 app.get("/", async (req, res) => {
   //This doesn't seem to be working... on initial page load, tons of stuff populate when they should not.
@@ -33,14 +34,14 @@ app.get("/", async (req, res) => {
       const result = await axios.post(API_URL, configConcat);
     // const response = JSON.stringify(result.data, null, 2);
     const items = result.data.items;
-    res.render("index.ejs", { content: items });
+    res.render("index-old.ejs", { content: items });
 
     items.forEach((item, i) => {
       console.log(items[i].indexTerms.scientificname);
 
     });
     } else {
-      res.render("index.ejs");
+      res.render("index-old.ejs");
     }
     console.log("Initial Pass: " + configConcat);
   } catch (error) {
@@ -71,7 +72,7 @@ console.log("Reload: " + API_URL+configConcat);
     // const result = await axios.post(API_URL, configConcat);
     const result = await axios.get(API_URL + configConcat);
     const items = result.data.items;
-    res.render("index.ejs", { content: items });
+    res.render("index-old.ejs", { content: items });
   } catch (error) {
     console.log(error);
   }
