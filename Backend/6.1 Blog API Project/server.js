@@ -27,6 +27,8 @@ app.get("/new", (req, res) => {
   res.render("modify.ejs", { heading: "New Post", submit: "Create Post" });
 });
 
+// Called by this:
+// <a class="edit" href="/edit/<%= post.id %>">Edit</a>
 app.get("/edit/:id", async (req, res) => {
   try {
     const response = await axios.get(`${API_URL}/posts/${req.params.id}`);
@@ -68,6 +70,8 @@ app.post("/api/posts/:id", async (req, res) => {
 });
 
 // Delete a post
+// Called by this:
+// <a class="delete" href="/api/posts/delete/<%= post.id %>">Delete</a>
 app.get("/api/posts/delete/:id", async (req, res) => {
   try {
     await axios.delete(`${API_URL}/posts/${req.params.id}`);
