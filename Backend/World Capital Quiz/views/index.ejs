@@ -15,6 +15,7 @@
         Total Score:
         <span id="score">
           <%= locals.totalScore ? totalScore : "0" %>
+          <!-- //  Fancy. Does locals.totalScore exist?  If so, display totalScore; otherwise display "0". -->
         </span>
       </h3>
 
@@ -27,6 +28,8 @@
       <input type="text" name="answer" id="userInput" placeholder="Enter the capital" autofocus autocomplete="off">
 
     </div>
+    <!-- // If locals.wasCorrect (if this isn't the first run), show a checkmark.  Else show an "x".
+    // But if neither are true, don't show anything but the button. -->
     <button type="submit">SUBMIT<% if(locals.wasCorrect){ %>
         <span class="checkmark">✔</span>
         <% } else if (locals.wasCorrect===false) { %>
@@ -35,6 +38,8 @@
     </button>
 
   </form>
+
+  // Assign local variable to LOCALS variable.  If it's false, show a losing message.  But what if it didn't exist, i.e. first run?
   <script>
     var wasCorrect = "<%= locals.wasCorrect %>";
     console.log(wasCorrect)
