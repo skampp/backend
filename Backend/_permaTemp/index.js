@@ -55,7 +55,7 @@ app.post("/submit", async (req, res) => {
   const [sChapter, sVerse] = fullString.split(":");
   const [sStartVerse, sEndVerse] = sVerse.split("-");
   
-  var sSearch = "select reference, refbook, refchapter, refverse, verse from nkjv where refbook = '" + sBook + "' and refchapter = " + sChapter + " and refverse"
+  var sSearch = "select reference, refbook, refchapter, refverse, verse from nkjv where lower(refbook) = '" + sBook.toLowerCase() + "' and refchapter = " + sChapter + " and refverse"
   
   if (sEndVerse) {
     sSearch = sSearch + " between " + sStartVerse + " and " + sEndVerse;
