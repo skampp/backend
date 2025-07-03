@@ -17,21 +17,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 let passage = [];
-var startup = true;
+var startup = false;
 await db.connect(); // optional if already connected
 
 if ((startup = false)) {
   var sSearch =
-    "select reference, refchapter, refbook, refverse, verse from nkjv where refbook = 'Jas' and refchapter = 1 and refverse < 9";
+    "SELECT book_stats.book, * FROM nkjv JOIN book_stats on nkjv.refbook = book_stats.abbrev where refbook = 'Jas' and refchapter = 1 and refverse < 9";
 } else {
   var sSearch =
-    "select reference, refchapter, refbook, refverse, verse from nkjv where refbook = '2Ti' and refchapter = 3 and refverse > 15 and refverse < 18";
+    "SELECT book_stats.book, * FROM nkjv JOIN book_stats on nkjv.refbook = book_stats.abbrev where refbook = '2Ti' and refchapter = 3 and refverse > 15 and refverse < 18";
 }
 
 async function thumperSearch(sSearch) {
-
-  console.log("1. sSearch: " + sSearch);
-  
   try {
     const result = await db.query(sSearch); // no callback here
     console.log(result.rows[0]); // you now have access to the rows
@@ -54,8 +51,7 @@ app.post("/submit", async (req, res) => {
   fullString = fullString.slice(4);
   const [sChapter, sVerse] = fullString.split(":");
   const [sStartVerse, sEndVerse] = sVerse.split("-");
-  
-  var sSearch = "select reference, refbook, refchapter, refverse, verse from nkjv where lower(refbook) = '" + sBook.toLowerCase() + "' and refchapter = " + sChapter + " and refverse"
+  var sSearch = "SELECT book_stats.book, * FROM nkjv JOIN book_stats on nkjv.refbook = book_stats.abbrev where lower(refbook) = '" + sBook.toLowerCase() + "' and refchapter = " + sChapter + " and refverse"
   
   if (sEndVerse) {
     sSearch = sSearch + " between " + sStartVerse + " and " + sEndVerse;
@@ -63,7 +59,6 @@ app.post("/submit", async (req, res) => {
     sSearch = sSearch + " = " + sStartVerse;
   }
 
-  // console.log(sSearch);
   const result = await thumperSearch(sSearch);
   res.render("index.ejs", { myPassage: result });
 });
@@ -71,3 +66,8 @@ app.post("/submit", async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
+
+// Changelog:
+// 2025.07.02 First real search available
+// 2025.07.03 Added book_stats table and JOINed for lookup of Jas to James
+//            Added title "From the book of..." header

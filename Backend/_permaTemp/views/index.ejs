@@ -7,8 +7,10 @@
     <link rel="stylesheet" href="/styles/main.css" />
   </head>
   <body id="app">
-    <div class="scripture-block">From the book of <%= myPassage[0].refbook %></div>
     <div class="scripture-block">
+    <% if (locals.myPassage) { %>  
+      <h4>From the book of <%= myPassage[0].book %>:</h4>
+    <% } %>
     <% if (locals.myPassage) { %>
         <% myPassage.forEach((verse, i) => { %>
             <sup class="supersmall"><%= myPassage[i].refverse %></sup><%= myPassage[i].verse %>&nbsp;

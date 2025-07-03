@@ -49,6 +49,10 @@ h3 {
   margin: 0;
 }
 
+h4 {
+  margin-top: 0;
+}
+
 .answer-container {
   width: 100%;
   text-align: center;
