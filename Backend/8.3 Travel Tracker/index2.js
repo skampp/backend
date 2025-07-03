@@ -50,10 +50,8 @@ app.post("/add", async (req, res) => {
   const input = req.body["country"];
   // console.log("Input: "+input);
 
-  const result = await db.query(
-    "SELECT country_code FROM countries WHERE country_name = $1",
-    [input]
-  );
+  const result = await db.query("SELECT country_code FROM countries WHERE country_name = $1", [input] );
+// const result = await db.query("SELECT country_code FROM countries WHERE lower(country_name) LIKE $1 || '%';", [input] );
 
   if (result.rows.length !== 0) { // Country name was found, proceeding
     const data = result.rows[0];
@@ -63,10 +61,7 @@ app.post("/add", async (req, res) => {
       [countryCode]
     );
     if (countryExists.rows.length == 0) { // Country has not been listed as visited
-      await db.query(
-        "INSERT INTO visited_countries (country_code) VALUES ($1)",
-        [countryCode]
-      );
+      await db.query("INSERT INTO visited_countries (country_code) VALUES ($1)", [countryCode] );
     } else {  // Country has already been listed as visited
       error.status = true;
       error.message = "Visited Country exists - nothing added.";
@@ -75,7 +70,6 @@ app.post("/add", async (req, res) => {
   } else {  // Country name was not found
     error.status = true;
     error.message = "No country by that name exists.";
-    // res.status("/", { error });
     res.redirect("/");
   }
 });
