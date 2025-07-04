@@ -49,6 +49,7 @@ app.post("/submit", async (req, res) => {
   // The next two sections really need to be in one or even two functions, but scoping is kicking my butt.  Help.
   var fullString = req.body.answer;
   // To handle something with both 1 and 2 spaces, such as 'Genesis 1:1' and '1 Corinthians 1:1'.
+  // Future issue to handle: multiples such as '1 Corinthians 1:1-5, 7-10'
   const lastSpace = fullString.lastIndexOf(" ");
   var sBook = fullString.slice(0, lastSpace);
   var fullString = fullString.slice(lastSpace + 1);
