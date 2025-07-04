@@ -31,7 +31,7 @@ if ((startup = true)) {
 async function thumperSearch(sSearch) {
   try {
     const result = await db.query(sSearch); // no callback here
-    console.log(result.rows[0]); // you now have access to the rows
+    // console.log(result.rows[0]); // you now have access to the rows
     return result.rows; // just return the data you want
   } catch (err) {
     console.error("Error executing query", err.stack);
@@ -41,30 +41,35 @@ async function thumperSearch(sSearch) {
 
 app.get("/", async (req, res) => {
   const resultVerses = await thumperSearch(sSearch);
-  console.log(resultVerses);
+  // console.log(resultVerses);
   res.render("index.ejs", { myPassage: resultVerses });
 });
 
 app.post("/submit", async (req, res) => {
+  // The next two sections really need to be in one or even two functions, but scoping is kicking my butt.  Help.
   var fullString = req.body.answer;
-  // Fix the next line.  Need to split it on the space character?  In case it's Jas or James.
-  const sBook = fullString.substring(0, 3);
-  // This will not be valid, either - fix it next.
-  fullString = fullString.slice(4);
-  const [sChapter, sVerse] = fullString.split(":");
-  const [sStartVerse, sEndVerse] = sVerse.split("-");
-
-  var sSearch = "SELECT book_stats.book, " +
-  "* FROM nkjv JOIN book_stats on nkjv.refbook = book_stats.abbrev "+
-  "where lower(refbook) = '" + sBook.toLowerCase() + "'"+
-  " and refchapter = " + sChapter + " and refverse"
+  // To handle something with both 1 and 2 spaces, such as 'Genesis 1:1' and '1 Corinthians 1:1'.
+  const lastSpace = fullString.lastIndexOf(" ");
+  var sBook = fullString.slice(0, lastSpace);
+  var fullString = fullString.slice(lastSpace + 1);
+  var [sChapter, sVerse] = fullString.split(":");
+  var [sStartVerse, sEndVerse] = sVerse.split("-");
   
+  var sSearch =
+    "SELECT book_stats.book, * FROM nkjv JOIN book_stats on nkjv.refbook = book_stats.abbrev ";
+  if (sBook.length == 3) {
+    sSearch = sSearch + "where lower(refbook) = '" + sBook.toLowerCase() + "'";
+  } else {
+    sSearch = sSearch + "where lower(book) = '" + sBook.toLowerCase() + "'";
+  }
+  sSearch = sSearch + " and refchapter = " + sChapter + " and refverse";
+
   if (sEndVerse) {
     sSearch = sSearch + " between " + sStartVerse + " and " + sEndVerse;
   } else {
     sSearch = sSearch + " = " + sStartVerse;
   }
-
+  // console.log("sSearch: " + sSearch);
   const result = await thumperSearch(sSearch);
   res.render("index.ejs", { myPassage: result });
 });
@@ -84,3 +89,4 @@ app.listen(port, () => {
 // 2025.07.03 Added book_stats table and JOINed for lookup of Jas to James
 //            Added title "From the book of..." header
 //            Added copy button to the ejs page
+//            Added ability to enter Jas or James, handled two-space entries such as '2 Timothy 3:16'
