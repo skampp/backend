@@ -14,22 +14,21 @@
     </style>
   </head>
   <body id="app">
-
-
-
     <div class="scripture-block" id="verseText">
-    <% if (locals.myPassage) { %>  
-      <h4>From the book of <%= myPassage[0].book %> chapter <%= myPassage[0].refchapter %>:</h4>
-    <% } %>
-    <% if (locals.myPassage) { %>
-      <div id="verseText">
+      <% if (locals.myPassage) { %>
+      <h4>
+        From the book of <%= myPassage[0].book %> chapter <%=
+        myPassage[0].refchapter %>:
+      </h4>
+      <% } %> <% if (locals.myPassage) { %>
+      <!-- <div id="verseText"> -->
         <% myPassage.forEach((verse, i) => { %>
-          <sup class="supersmall"><%= verse.refverse %></sup><%= verse.verse %>&nbsp;
-        <% }) %>
-      </div>
+        <sup class="supersmall"><%= verse.refverse %></sup><%= verse.verse
+        %>&nbsp; <% }) %>
+      <!-- </div> -->
       <% } %>
     </div>
-    <button id="copyButton" class="narrow-button">📋 Copy Passage</button>
+    <button id="copyButton" class="narrow-button">Copy Passage</button>
     <form class="container" action="/submit" method="post">
       <div class="answer-container">
         <input
@@ -45,12 +44,26 @@
     </form>
 
     <script>
-      document.getElementById("copyButton")?.addEventListener("click", function () {
-        const text = document.getElementById("verseText").innerText;
-        navigator.clipboard.writeText(text)
-          // .then(() => alert("Passage copied to clipboard!"))
-          .catch(err => alert("Failed to copy: " + err));
-      });
+      document
+        .getElementById("copyButton")
+        ?.addEventListener("click", async function () {
+          const verseElement = document.getElementById("verseText");
+          const html = verseElement.innerHTML;
+
+          try {
+            await navigator.clipboard.write([
+              new ClipboardItem({
+                "text/html": new Blob([html], { type: "text/html" }),
+                "text/plain": new Blob([verseElement.innerText], {
+                  type: "text/plain",
+                }),
+              }),
+            ]);
+            // alert("Formatted passage copied to clipboard!");
+          } catch (err) {
+            alert("Failed to copy: " + err);
+          }
+        });
     </script>
   </body>
 </html>

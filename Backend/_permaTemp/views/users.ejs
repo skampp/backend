@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Users and Lists</title>
+  </head>
+  <body>
+    <h1>Playground</h1>
+    <% if (locals.userLogged) { userLogged %>
+    <p>UserID:</p>
+    <ul>
+      <% if (locals.myUsers) { %>
+      <li><%= myUsers[0].userid %></li>
+      <% } %>
+    </ul>
+
+    <p>Current User:</p>
+    <ul>
+      <li><%= myUsers[0].username %></li>
+    </ul>
+
+    <p>Lists I've Made:</p>
+    <ul>
+      <% if (locals.myUsers) { myUsers.forEach((list, i) => { %>
+        <% if(list.listownerid == list.userid) { %>
+        <li><%= list.listname %></li>
+
+        <% }; %>
+      <% }) } %>
+    </ul>
+
+    <p>Other Lists I'm subscribed to:</p>
+
+    <ul>
+      <% if (locals.myUsers) { myUsers.forEach((list, i) => { %>
+        <% if(list.listownerid !== list.userid) { %>
+        
+            <li><%= list.listname %></li>
+            <% }; %>
+      <% }) } %>
+    </ul>
+
+    <p>Current List:</p>
+    <p>
+      Now make a form with a dropdown with all lists that I have access to, let
+      me choose one, and display the verses below it.
+    </p>
+
+    <form class="container" action="/logout" method="post">
+      <button type="submit">Log Out</button>
+    </form>
+
+
+
+
+    <form action="/pickList" method="POST">
+  <label for="menu">List:</label>
+  <select name="listChoice" id="listChoice">
+    <% if (locals.myUsers) { 
+         myUsers.forEach((list, i) => { %>
+      <option value="<%= list.listname %>" 
+        <%= list.listid == list.defaultlist ? 'selected' : '' %>>
+        <%= list.listname %>
+      </option>
+    <% }) } %>
+  </select>
+  
+  <input type="hidden" name="userID" value="<%= myUsers[0].userid %>" />
+  <input type="hidden" name="userName" value="<%= myUsers[0].username %>" />
+  <input type="hidden" name="userLogged" value="<%= userLogged %>" />
+  <button type="submit">Submit</button>
+</form>
+
+
+    <% } else { %>
+    <p>No user currently logged in.</p>
+
+    <form class="container" action="/usersubmit" method="post">
+      <div class="answer-container">
+        <input
+          type="text"
+          name="user"
+          id="userInput"
+          placeholder="User Name"
+          autofocus
+          autocomplete="off"
+        />
+      </div>
+      <button type="submit">Log In</button>
+    </form>
+
+    <% }; %>
+  </body>
+</html>
