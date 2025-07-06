@@ -8,11 +8,12 @@
   <body>
     <h1>Playground</h1>
     <% if (locals.userLogged) { userLogged %>
+        <form class="container" action="/logout" method="post">
+          <button type="submit">Log Out</button>
+        </form>
     <p>UserID:</p>
     <ul>
-      <% if (locals.myUsers) { %>
       <li><%= myUsers[0].userid %></li>
-      <% } %>
     </ul>
 
     <p>Current User:</p>
@@ -22,60 +23,81 @@
 
     <p>Lists I've Made:</p>
     <ul>
-      <% if (locals.myUsers) { myUsers.forEach((list, i) => { %>
+      <% myUsers.forEach((list, i) => { %>
         <% if(list.listownerid == list.userid) { %>
         <li><%= list.listname %></li>
 
         <% }; %>
-      <% }) } %>
+      <% }) %>
     </ul>
 
     <p>Other Lists I'm subscribed to:</p>
-
     <ul>
-      <% if (locals.myUsers) { myUsers.forEach((list, i) => { %>
+      <% myUsers.forEach((list, i) => { %>
         <% if(list.listownerid !== list.userid) { %>
         
             <li><%= list.listname %></li>
             <% }; %>
-      <% }) } %>
+      <% }) %>
     </ul>
 
-    <p>Current List:</p>
-    <p>
-      Now make a form with a dropdown with all lists that I have access to, let
-      me choose one, and display the verses below it.
-    </p>
+    <!-- <p>Current List:</p> -->
+    
+    <!-- Select Current List -->
+    <form action="/usersubmit" method="POST">
+        <label for="menu">List:</label>
+        <select name="listChoice" id="listChoice">
+            <% myUsers.forEach((list, i) => { %>
+            <option value="<%= list.listid %>" 
+                <%= list.listid == list.defaultlist ? 'selected' : '' %>>
+                <%= list.listname %>
+            </option>
+            <% }) %>
+        </select>
+        <input type="hidden" name="userID" value="<%= myUsers[0].userid %>" />
+        <input type="hidden" name="user" value="<%= myUsers[0].username %>" />
+        <input type="hidden" name="userLogged" value="<%= userLogged %>" />
+        <input type="hidden" name="listChanged" value="true" />
+        <button type="submit">Submit</button>
+    </form>
+    
+    <!-- List and Delete Verses from Current List -->
+<p>Verses for Current List:</p>
+    <form action="/usersubmit" method="POST">
+      <% myVerses.forEach((list, i) => { %>
+        <% if(list.popuserid == myUsers[0].userid) { %>
 
-    <form class="container" action="/logout" method="post">
-      <button type="submit">Log Out</button>
+        <input type="checkbox" name="verses" value="<%=list.id%>"> <%= list.listreference %><br>
+      <% } }) %>
+      <input type="hidden" name="userID" value="<%= myUsers[0].userid %>" />
+      <input type="hidden" name="user" value="<%= myUsers[0].username %>" />
+      <input type="hidden" name="userLogged" value="<%= userLogged %>" />
+      Do some checking later to make sure I'm allowed to delete!<br>
+      <button type="submit">Delete</button>
     </form>
 
-
-
-
-    <form action="/pickList" method="POST">
-  <label for="menu">List:</label>
-  <select name="listChoice" id="listChoice">
-    <% if (locals.myUsers) { 
-         myUsers.forEach((list, i) => { %>
-      <option value="<%= list.listname %>" 
-        <%= list.listid == list.defaultlist ? 'selected' : '' %>>
-        <%= list.listname %>
-      </option>
-    <% }) } %>
-  </select>
-  
-  <input type="hidden" name="userID" value="<%= myUsers[0].userid %>" />
-  <input type="hidden" name="userName" value="<%= myUsers[0].username %>" />
-  <input type="hidden" name="userLogged" value="<%= userLogged %>" />
-  <button type="submit">Submit</button>
+<br>
+    <!-- Add Verses to Current List -->
+    <div class="answer-container"></div>
+<form class="container" action="/usersubmit" method="post">
+    <input type="text" name="addverse" id="addVerse" placeholder="Add Verse"/>
+    <input type="hidden" name="userID" value="<%= myUsers[0].userid %>" />
+    <input type="hidden" name="user" value="<%= myUsers[0].username %>" />
+    <input type="hidden" name="userLogged" value="<%= userLogged %>" />
+    <input type="hidden" name="defaultlist" value="<%= myUsers[0].defaultlist %>" />
+    <br>Do some checking later to make sure I'm allowed to add!<br>
+    
+    <button type="submit">Add</button>
 </form>
+</div>
+
+
+
 
 
     <% } else { %>
     <p>No user currently logged in.</p>
-
+<!-- Log In -->
     <form class="container" action="/usersubmit" method="post">
       <div class="answer-container">
         <input
