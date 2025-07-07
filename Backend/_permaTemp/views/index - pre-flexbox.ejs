@@ -83,13 +83,13 @@
     <input type="hidden" name="userLogged" value="<%= userLogged %>" />
     <input type="hidden" name="defaultlist" value="<%= myUsers[0].defaultlist %>" />
     <input type="hidden" name="resultPassage" value="<%= JSON.stringify(myPassage) %>" />
-    <!-- <br>Do some checking later to make sure I'm allowed to add!<br> -->
+    <br>Do some checking later to make sure I'm allowed to add!<br>
     
     <button type="submit">Add</button>
   </form>
   
-  <!-- Why the heck is this here?  I was likely trying to check to see if a user was logged in to decide whether to show the following... but it ain't broke? -->
-   <!-- <%= userLogged %> -->
+  
+   <%= userLogged %>
       <div class="container">
         <form class="container" action="/logout" method="post">
           <input type="hidden" name="resultPassage" value="<%= JSON.stringify(myPassage) %>" />
