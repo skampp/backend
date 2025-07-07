@@ -13,6 +13,9 @@ const db = new pg.Client({
 const app = express();
 const port = 3000;
 var userLogged = false;
+var badUser = false;
+var paragraphMode = false;
+
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
@@ -45,11 +48,12 @@ app.get("/", async (req, res) => {
   try {
     const resultVerses = await thumperSearch(sSearch);
     const resultUsers = await thumperSearch(uSearch);
-    // console.log(resultVerses);
     res.render("index.ejs", {
       myPassage: resultVerses,
       userLogged: userLogged,
       myUsers: resultUsers,
+      badUser: badUser,
+      paragraphMode: paragraphMode,
     });
   } catch (err) {
     console.log(err);
@@ -94,20 +98,28 @@ app.post("/submit", async (req, res) => {
       myUsers: resultUsers,
       myVerses: resultVerses,
       myPassage: result,
+      paragraphMode: paragraphMode,
     });
   } else {
-    res.render("index.ejs", { myPassage: result });
+    res.render("index.ejs", { myPassage: result, paragraphMode: paragraphMode });
   }
 });
 
-app.post("/usersubmit", async (req, res) => {
-  // *** CRITICAL ***
-  // What is being passed to index.ejs on any submit?  Those things need to be included here
-  // in order for the verse text to be populated.
+app.post("/versesubmit", async (req, res) => {
 
+});
+
+
+app.post("/usersubmit", async (req, res) => {
+  console.log("1: " + req.body.verseItems);
+  console.log("2: " + req.body.userID);
+  console.log("3: " + req.body.user);
+  console.log("4: " + req.body.userLogged);
+  console.log("5: " + req.body.listChanged);
+  console.log("6: " + req.body.resultPassage);
   var myResults = JSON.parse(req.body.resultPassage); // necessary when bringing arrays back thru html forms via hidden elements
   try {
-    if (req.body.listChanged) {
+    if (req.body.userID) {
       // Are we changing the current list?
       var cSearch =
         "UPDATE thuser SET defaultlist = '" +
@@ -137,18 +149,18 @@ app.post("/usersubmit", async (req, res) => {
         "', '" +
         req.body.addverse +
         "')"; //thlistpopulation.verselistid
-      console.log(aSearch);
+      // console.log(aSearch);
       thumperSearch(aSearch);
     }
 
     // User stuff
-
+  try {
     var uSearch =
-      "SELECT * FROM thlistsubscription s JOIN thuser u ON s.popuserid = u.userid JOIN thlists l ON l.listid = s.poplistid WHERE u.username = '" +
-      req.body.user +
+      "SELECT * FROM thlistsubscription s JOIN thuser u ON s.popuserid = u.userid JOIN thlists l ON l.listid = s.poplistid WHERE lower(u.username) = '" +
+      req.body.user.toLowerCase() +
       "'";
-    const resultUsers = await thumperSearch(uSearch);
-    userLogged = true;
+      const resultUsers = await thumperSearch(uSearch); // Actual user login
+      userLogged = true;
 
     // Verse stuff
     var vSearch =
@@ -160,8 +172,18 @@ app.post("/usersubmit", async (req, res) => {
       myUsers: resultUsers,
       myVerses: resultVerses,
       myPassage: myResults,
+      paragraphMode: paragraphMode,
     });
   } catch (err) {
+    console.log(err);
+    badUser = true;
+    userLogged = false;
+    res.redirect("/");
+  }
+
+
+  } catch (err) {
+    console.log("Somebody messed up.");
     console.log(err);
   }
 });

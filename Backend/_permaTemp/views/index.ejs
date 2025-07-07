@@ -6,8 +6,6 @@
     <title>Thumper</title>
     <link rel="stylesheet" href="/styles/testpilot.css" />
   </head>
-<!-- First search, before login, the page has myPassage and userLogged by default.  Let's see if I can raise them quick in the page. -->
-
   <body>
     <div class="resizablecontainer"> <!-- Search box, Search button, Copy Button in one div -->
       <form class="container" action="/submit" method="post">
@@ -21,7 +19,10 @@
         <% if(locals.userLogged) {   %>
           <input type="hidden" name="resultVerses" value="<%= JSON.stringify(myVerses) %>" />
         <% }; %>
-          <div class="div-spacing"><button type="submit">Thumper Search</button></div>
+        <% if(locals.paragraphMode) {   %>
+        <input type="hidden" name="paragraphMode" value="<%= paragraphMode %>" />  
+        <% }; %>
+        <div class="div-spacing"><button type="submit">Thumper Search</button></div>
           <div class="div-spacing"><button id="copyButton" class="narrow-button" type="button">Copy Passage</button></div>
               
       </form>
@@ -121,11 +122,12 @@
 </div>
 
 
-
-
-
     <% } else { %>
-    <p>No user currently logged in.</p>
+    <!-- Change this to a variable, in case a bad username was entered. -->
+      <p>No user currently logged in.</p>
+      <% if (locals.badUser) { %>
+        <p>Bad username, try again.</p>
+      <% } %>
 <!-- Log In -->
     <form class="container" action="/usersubmit" method="post">
       <div class="answer-container">
@@ -147,19 +149,55 @@
     </div>
 
     <div class="scripture-block scroll-box" id="verseText">  <!-- Scripture Block in the second div -->
-      <% if (locals.myPassage) { %>
-      <h4>
-        From the book of <%= myPassage[0].book %> chapter <%=
-        myPassage[0].refchapter %>:
-      </h4>
-      <% } %> <% if (locals.myPassage) { %>
-      <div id="verseText">
-      <% myPassage.forEach((verse, i) => { %>
-      <sup class="supersmall"><%= verse.refverse %></sup><%= verse.verse
-      %>&nbsp; <% }) %>
-      </div>
-      <% } %>
-    </div>
+      <% if (locals.paragraphMode) { %>
+        <p>Paragraph mode is on.</p>
+              <% if (locals.myPassage) { %>
+              <h4>From the book of <%= myPassage[0].book %> chapter <%= myPassage[0].refchapter %>:</h4>
+              <div id="verseText">
+              <% myPassage.forEach((verse, i) => { %>
+              <sup class="supersmall"><%= verse.refverse %></sup><%= verse.verse
+              %>&nbsp; <% }) %>
+              </div>
+              <% } %>
+
+
+
+
+        <% } else { %>
+        <p>Paragraph mode is off.</p>
+  <!-- ************ IMPORTANT ************* userLogged doesn't seem to be available here for some reason.  Find out why and fix it. -->
+        <% if (locals.myPassage) { %>
+          <h4>From the book of <%= myPassage[0].book %> chapter <%= myPassage[0].refchapter %>:</h4>
+          <div id="verseText">
+          <form action="/usersubmit" method="POST" > <!-- May need to change the endpoint?  Or add the hidden data. -->
+            <% myPassage.forEach((verse, i) => { %>
+              <input type="checkbox" name="verseItems" value="<%= verse.refverse %>"> 
+              <sup class="supersmall"><%= verse.refverse %></sup><%= verse.verse %>&nbsp; <br> <% }) %>
+              <% if(locals.userLogged) { %>
+                <input type="hidden" name="userID" value="<%= myUsers[0].userid %>" />
+                <input type="hidden" name="user" value="<%= myUsers[0].username %>" />
+                <% } %>
+                <input type="hidden" name="userLogged" value="<%= locals.userLogged %>" />
+                <input type="hidden" name="listChanged" value="false" />
+                <input type="hidden" name="resultPassage" value="<%= JSON.stringify(myPassage) %>" />
+                <button type="submit">Do...</button>
+            </form>
+              </div>
+            <% } %>
+
+        </div>
+
+
+
+
+      <% }; %>
+
+
+
+
+
+        
+
 
 
 
