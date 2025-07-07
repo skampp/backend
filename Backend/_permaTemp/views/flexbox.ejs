@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thumper</title>
+    <link rel="stylesheet" href="/styles/flextest.css" />
+</head>
+<body>
+<!-- There is an IF statement somewhere that cuts up a DIV.  When I am logged out, it's hidden and all's well.
+But when I log in, the DIV or /DIV is exposed and totally screws up the resizable columns. -->
+<div class="split-container">
+  <div class="pane left" id="leftPane">
+                <div class="resizablecontainer"> <!-- Search box, Search button, Copy Button in one div -->
+                      <form class="container" action="/submit" method="post">
+                        <div class="div-spacing"><input type="text" name="answer" id="userInput" placeholder="Bible reference" autofocus/></div>
+                        <% if(locals.userLogged) {   %>
+                          <input type="hidden" name="userLogged" value="<%= JSON.stringify(userLogged) %>" />
+                        <% }; %>
+                        <% if(locals.userLogged) {   %>
+                          <input type="hidden" name="resultUsers" value="<%= JSON.stringify(myUsers) %>" />
+                        <% }; %>
+                        <% if(locals.userLogged) {   %>
+                          <input type="hidden" name="resultVerses" value="<%= JSON.stringify(myVerses) %>" />
+                        <% }; %>
+                          <div class="div-spacing"><button type="submit">Thumper Search</button></div>
+                          <div class="div-spacing"><button id="copyButton" class="narrow-button" type="button">Copy Passage</button></div>
+                              
+                      </form>
+
+                    <% if(locals.userLogged) {   %>
+                      <!-- ********************************************************************************************-->
+                      
+
+                    <!-- <p>Current List:</p> -->
+                    
+                    <!-- Select Current List -->
+                    <div class="container">
+                    <form action="/usersubmit" method="POST">
+                        <label for="menu">Current List:</label>
+                        <select name="listChoice" id="listChoice">
+                            <% myUsers.forEach((list, i) => { %>
+                            <option value="<%= list.listid %>" 
+                                <%= list.listid == list.defaultlist ? 'selected' : '' %>>
+                                <%= list.listname %>
+                            </option>
+                            <% }) %>
+                        </select>
+                        <input type="hidden" name="userID" value="<%= myUsers[0].userid %>" />
+                        <input type="hidden" name="user" value="<%= myUsers[0].username %>" />
+                        <input type="hidden" name="userLogged" value="<%= userLogged %>" />
+                        <input type="hidden" name="listChanged" value="true" />
+                        <input type="hidden" name="resultPassage" value="<%= JSON.stringify(myPassage) %>" />
+                        <br><br>
+                        <button type="submit">Submit</button>
+                    </form>
+                    </div>
+                    
+                    <!-- List and Delete Verses from Current List -->
+                    <div class="container">
+                    <p>Verses for Current List:</p>
+                    <form action="/usersubmit" method="POST" >
+                      <% myVerses.forEach((list, i) => { %>
+                        <% if(list.popuserid == myUsers[0].userid) { %>
+
+                        <input type="checkbox" name="verses" value="<%=list.id%>"> <%= list.listreference %><br>
+                      <% } }) %>
+                      <input type="hidden" name="userID" value="<%= myUsers[0].userid %>" />
+                      <input type="hidden" name="user" value="<%= myUsers[0].username %>" />
+                      <input type="hidden" name="userLogged" value="<%= userLogged %>" />
+                      <input type="hidden" name="resultPassage" value="<%= JSON.stringify(myPassage) %>" />
+                      <!-- Do some checking later to make sure I'm allowed to delete! -->
+                      <br>
+                      <button type="submit">Delete</button>
+                    </form>
+                    </div>
+                    
+                    <br>
+                    <!-- Add Verses to Current List -->
+                    <!-- <div class="answer-container"></div> -->
+                    <form class="container" action="/usersubmit" method="post">
+                      <input type="text" name="addverse" id="addVerse" placeholder="Add Verse"/>
+                    <input type="hidden" name="userID" value="<%= myUsers[0].userid %>" />
+                    <input type="hidden" name="user" value="<%= myUsers[0].username %>" />
+                    <input type="hidden" name="userLogged" value="<%= userLogged %>" />
+                    <input type="hidden" name="defaultlist" value="<%= myUsers[0].defaultlist %>" />
+                    <input type="hidden" name="resultPassage" value="<%= JSON.stringify(myPassage) %>" />
+                    <!-- <br>Do some checking later to make sure I'm allowed to add!<br> -->
+                    
+                    <button type="submit">Add</button>
+                  </form>
+                  
+                  <!-- Why the heck is this here?  I was likely trying to check to see if a user was logged in to decide whether to show the following... but it ain't broke? -->
+                  <!-- <%= userLogged %> -->
+                      <div class="container">
+                        <form class="container" action="/logout" method="post">
+                          <input type="hidden" name="resultPassage" value="<%= JSON.stringify(myPassage) %>" />
+                          <button type="submit">Log Out</button>
+                        </form>
+                        <p>User: <%= myUsers[0].userid %>, <%= myUsers[0].username %></p>
+
+                    <p>My Lists:</p>
+                    <ul>
+                      <% myUsers.forEach((list, i) => { %>
+                        <% if(list.listownerid == list.userid) { %>
+                        <li><%= list.listname %></li>
+
+                        <% }; %>
+                      <% }) %>
+                    </ul>
+
+                    
+                    <p>Subs:</p>
+                    <ul>
+                      <% myUsers.forEach((list, i) => { %>
+                        <% if(list.listownerid !== list.userid) { %>
+                        
+                            <li><%= list.listname %></li>
+                            <% }; %>
+                      <% }) %>
+                    </ul>
+                </div>
+                </div>
+
+
+
+
+
+                    <% } else { %>
+                    <p>No user currently logged in.</p>
+                <!-- Log In -->
+                    <form class="container" action="/usersubmit" method="post">
+                      <div class="answer-container">
+                        <input
+                          type="text"
+                          name="user"
+                          id="userInput"
+                          placeholder="User Name"
+                          autofocus
+                          autocomplete="off"
+                        />
+                      </div>
+                      <input type="hidden" name="resultPassage" value="<%= JSON.stringify(myPassage) %>" />
+                      <button type="submit">Log In</button>
+                    </form>
+
+                    <% }; %>
+                      <!-- ********************************************************************************************-->
+                    </div>
+</div>
+
+
+  <div class="resizer" id="resizer"></div>
+
+
+
+
+
+  <div class="pane right" id="rightPane">Right Pane
+                    <div class="scripture-block scroll-box" id="verseText">  <!-- Scripture Block in the second div -->
+                        <% if (locals.myPassage) { %>
+                        <h4>
+                          From the book of <%= myPassage[0].book %> chapter <%=
+                          myPassage[0].refchapter %>:
+                        </h4>
+                        <% } %> <% if (locals.myPassage) { %>
+                        <div id="verseText">
+                        <% myPassage.forEach((verse, i) => { %>
+                        <sup class="supersmall"><%= verse.refverse %></sup><%= verse.verse
+                        %>&nbsp; <% }) %>
+                        </div>
+                        <% } %>
+                      </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+      document
+        .getElementById("copyButton")
+        ?.addEventListener("click", async function () {
+          const verseElement = document.getElementById("verseText");
+          const html = verseElement.innerHTML;
+
+          try {
+            await navigator.clipboard.write([
+              new ClipboardItem({
+                "text/html": new Blob([html], { type: "text/html" }),
+                "text/plain": new Blob([verseElement.innerText], {
+                  type: "text/plain",
+                }),
+              }),
+            ]);
+            // alert("Formatted passage copied to clipboard!");
+          } catch (err) {
+            alert("Failed to copy: " + err);
+          }
+        });
+    </script>
+
+<script>
+  const resizer = document.getElementById('resizer');
+  const leftPane = document.getElementById('leftPane');
+
+  let isDragging = false;
+
+  resizer.addEventListener('mousedown', function (e) {
+    isDragging = true;
+    document.body.style.cursor = 'ew-resize';
+  });
+
+  document.addEventListener('mousemove', function (e) {
+    if (!isDragging) return;
+    const containerOffsetLeft = document.querySelector('.split-container').offsetLeft;
+    const newLeftWidth = e.clientX - containerOffsetLeft;
+    leftPane.style.width = newLeftWidth + 'px';
+  });
+
+  document.addEventListener('mouseup', function () {
+    isDragging = false;
+    document.body.style.cursor = '';
+  });
+</script>
+
+
+
+
+
+
+</body>
+</html>
