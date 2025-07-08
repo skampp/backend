@@ -14,7 +14,7 @@ const app = express();
 const port = 3000;
 var userLogged = false;
 var badUser = false;
-var paragraphMode = false;
+var paragraphMode = true;
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -91,6 +91,7 @@ app.post("/submit", async (req, res) => {
   } else {
     sSearch += " = " + sStartVerse;
   }
+  sSearch += " ORDER BY refverse"
   const result = await thumperSearch(sSearch);
   if (userLogged) {
     res.render("index.ejs", {
@@ -111,12 +112,12 @@ app.post("/versesubmit", async (req, res) => {
 
 
 app.post("/usersubmit", async (req, res) => {
-  console.log("1: " + req.body.verseItems);
-  console.log("2: " + req.body.userID);
-  console.log("3: " + req.body.user);
-  console.log("4: " + req.body.userLogged);
-  console.log("5: " + req.body.listChanged);
-  console.log("6: " + req.body.resultPassage);
+  // console.log("1: " + req.body.verseItems);
+  // console.log("2: " + req.body.userID);
+  // console.log("3: " + req.body.user);
+  // console.log("4: " + req.body.userLogged);
+  // console.log("5: " + req.body.listChanged);
+  // console.log("6: " + req.body.resultPassage);
   var myResults = JSON.parse(req.body.resultPassage); // necessary when bringing arrays back thru html forms via hidden elements
   try {
     if (req.body.userID) {
@@ -191,9 +192,11 @@ app.post("/usersubmit", async (req, res) => {
 // User logs out
 app.post("/logout", async (req, res) => {
   try {
+    paragraphMode = JSON.parse(req.body.paragraphMode);
+    console.log("CM: " + paragraphMode);
     var myResults = JSON.parse(req.body.resultPassage); // necessary when bringing arrays back thru html forms via hidden elements
     userLogged = false;
-    res.render("index.ejs", { myPassage: myResults, userLogged: userLogged });
+    res.render("index.ejs", { myPassage: myResults, userLogged: userLogged, paragraphMode: paragraphMode });
   } catch (err) {
     console.log(err);
   }

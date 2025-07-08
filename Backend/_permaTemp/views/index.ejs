@@ -94,6 +94,9 @@
       <div class="container">
         <form class="container" action="/logout" method="post">
           <input type="hidden" name="resultPassage" value="<%= JSON.stringify(myPassage) %>" />
+          <% if(locals.paragraphMode) {   %>
+        <input type="hidden" name="paragraphMode" value="<%= paragraphMode %>" />  
+        <% }; %>
           <button type="submit">Log Out</button>
         </form>
         <p>User: <%= myUsers[0].userid %>, <%= myUsers[0].username %></p>
@@ -150,7 +153,7 @@
 
     <div class="scripture-block scroll-box" id="verseText">  <!-- Scripture Block in the second div -->
       <% if (locals.paragraphMode) { %>
-        <p>Paragraph mode is on.</p>
+        <!-- Paragraph mode is on. -->
               <% if (locals.myPassage) { %>
               <h4>From the book of <%= myPassage[0].book %> chapter <%= myPassage[0].refchapter %>:</h4>
               <div id="verseText">
@@ -164,7 +167,7 @@
 
 
         <% } else { %>
-        <p>Paragraph mode is off.</p>
+        <!-- Paragraph mode is off. -->
   <!-- ************ IMPORTANT ************* userLogged doesn't seem to be available here for some reason.  Find out why and fix it. -->
         <% if (locals.myPassage) { %>
           <h4>From the book of <%= myPassage[0].book %> chapter <%= myPassage[0].refchapter %>:</h4>
@@ -180,9 +183,9 @@
                 <input type="hidden" name="userLogged" value="<%= locals.userLogged %>" />
                 <input type="hidden" name="listChanged" value="false" />
                 <input type="hidden" name="resultPassage" value="<%= JSON.stringify(myPassage) %>" />
+              </div>
                 <button type="submit">Do...</button>
             </form>
-              </div>
             <% } %>
 
         </div>
