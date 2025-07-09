@@ -14,7 +14,7 @@ env.config();
 
 app.use(
   session({
-    secret: "TOPSECRETWORD",
+    secret: ,
     resave: false,
     saveUninitialized: true,
   })
@@ -29,7 +29,7 @@ const db = new pg.Client({
   user: "postgres",
   host: "localhost",
   database: "secrets",
-  password: "123456",
+  password: "Cardigan.reboot7",
   port: 5432,
 });
 db.connect();
