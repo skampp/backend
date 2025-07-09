@@ -61,6 +61,22 @@ app.post("/register", async (req, res) => {
 app.post("/login", async (req, res) => {
   const email = req.body.username;
   const password = req.body.password;
+  try {
+    const checkLogin = await db.query(
+      "SELECT * FROM users WHERE email = $1", 
+      [email]
+    );
+    if (checkLogin.rowCount > 0 && checkLogin.password == password) {
+      res.render("secrets.ejs");
+    } else {
+      // Username or password incorrect.
+      res.send("Username or password incorrect.  Try <a href='http://localhost:3000'>logging in</a> again.");
+    }
+    
+
+  } catch (err) {
+    console.log (err);
+  }
   
 });
 
