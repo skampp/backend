@@ -124,7 +124,6 @@
 </div>
 </div>
 
-
     <% } else { %>
     <!-- Change this to a variable, in case a bad username was entered. -->
       <p>No user currently logged in.</p>
@@ -132,7 +131,7 @@
         <p>Bad username, try again.</p>
       <% } %>
 <!-- Log In -->
-    <form class="container" action="/usersubmit" method="post">
+    <form class="container" action="/login" method="post">
       <div class="answer-container">
         <input
           type="text"
@@ -146,6 +145,18 @@
       <input type="hidden" name="resultPassage" value="<%= JSON.stringify(myPassage) %>" />
       <button type="submit">Log In</button>
     </form>
+    <% if(!locals.userLogged) { %>
+    <form class="container" action="/register" method="post">
+      <input type="text" name="user" id="username" placeholder="User Name" autocomplete="off" />  
+      <input type="password" name="password" id="password" placeholder="Password" autocomplete="off" />
+      <input type="hidden" name="resultPassage" value="<%= JSON.stringify(myPassage) %>" />
+      <button type="submit">Register</button>
+      <!-- Pass these things as well: verseItems, userID, user, userLogged, listChanged, resultPassage -->
+      <!-- userID is being picked up on the other side.  Assign var name from there so that /usersubmit will work properly.  Also set user. -->
+      <input type="hidden" name="resultPassage" value="<%= JSON.stringify(myPassage) %>" />
+
+    </form>
+    <% } %>
 
     <% }; %>
       <!-- ********************************************************************************************-->

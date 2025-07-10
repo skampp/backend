@@ -78,6 +78,23 @@ app.get("/", async (req, res) => {
   }
 });
 
+app.post(
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/success",
+    failureRedirect: "/failure"
+  })
+  // console.log("User hit the login endpoint at least.");
+);
+
+app.get("/failure", (req, res) => {
+  res.render("failure.ejs");
+});
+
+app.get("/success", (req, res) => {
+  res.render("success.ejs");
+});
+
 app.post("/submit", async (req, res) => {
   // From INDEX only, incorporate USERS variables
   var fullString = req.body.answer;
@@ -176,11 +193,10 @@ app.post("/usersubmit", async (req, res) => {
   try {
     var uSearch =
       "SELECT * FROM thlistsubscription s JOIN thuser u ON s.popuserid = u.userid JOIN thlists l ON l.listid = s.poplistid WHERE lower(u.username) = '" +
-      req.body.user.toLowerCase() +
-      "'";
+      req.body.user.toLowerCase() + "'";
       const resultUsers = await thumperSearch(uSearch); // Actual user login
+      // console.log("resultUsers: " + resultUsers); // this is the next stopsign.  resolves to nothing.
       userLogged = true;
-
     // Verse stuff
     var vSearch =
       "SELECT * from thlistsubscription s JOIN thlistpopulation p on s.poplistid = p.verselistid WHERE s.poplistid = " +
@@ -227,13 +243,15 @@ async function fullName(sBook) {
 }
 
 app.post("/register", async (req, res) => {
-  const email = req.body.username;
+  const email = req.body.user;
   const password = req.body.password;
+  console.log("Hit the register endpoint.  U: " + email + ", P: " + password);
+  
   // Need to make a registration form to return the above items.
   // Manually call it for now.
 
   try {
-    const checkResult = await db.query("SELECT * FROM thusers WHERE username = $1", [
+    const checkResult = await db.query("SELECT * FROM thuser WHERE username = $1", [
       email,
     ]);
 
@@ -245,14 +263,17 @@ app.post("/register", async (req, res) => {
           console.error("Error hashing password:", err);
         } else {
           const result = await db.query(
-            "INSERT INTO users (username, hashtag, defaultlist) VALUES ($1, $2, 1) RETURNING *",
+            "INSERT INTO thuser (username, userprivacy, useremail, hashtag, defaultlist) VALUES ($1, false, $1, $2, 1) RETURNING *",
             [email, hash]
           );
           const user = result.rows[0];
+          const addDefaultSub = await db.query(
+            "INSERT INTO thlistsubscription (popuserid, poplistid) VALUES ($1, $2)", [user.userid, user.defaultlist]
+          );
           req.login(user, (err) => {
             console.log("success");
             // Need a landing page, which woudld have been //usersubmit.  Figure out how to work this back into the normal-but-modified flow.
-            res.redirect("/secrets");
+            res.redirect("/");
           });
         }
       });
@@ -264,12 +285,14 @@ app.post("/register", async (req, res) => {
 
 passport.use(
   new Strategy(async function verify(username, password, cb) {
+    console.log("Hi!");
     try {
-      const result = await db.query("SELECT * FROM thusers WHERE email = $1 ", [
+      const result = await db.query("SELECT * FROM thusers WHERE username = $1 ", [
         username,
       ]);
       if (result.rows.length > 0) {
         const user = result.rows[0];
+        
         const storedHashedPassword = user.password;
         bcrypt.compare(password, storedHashedPassword, (err, valid) => {
           if (err) {
