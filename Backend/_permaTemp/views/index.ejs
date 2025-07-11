@@ -78,7 +78,7 @@
     <!-- Add Verses to Current List -->
     <!-- <div class="answer-container"></div> -->
     <form class="container" action="/usersubmit" method="post">
-      <input type="text" name="addverse" id="addVerse" placeholder="Add Verse"/>
+    <input type="text" name="addverse" id="addVerse" placeholder="Add Verse"/>
     <input type="hidden" name="userID" value="<%= myUsers[0].userid %>" />
     <input type="hidden" name="user" value="<%= myUsers[0].username %>" />
     <input type="hidden" name="userLogged" value="<%= userLogged %>" />
@@ -135,16 +135,20 @@
       <div class="answer-container">
         <input
           type="text"
-          name="user"
+          name="username"
           id="userInput"
           placeholder="User Name"
           autofocus
           autocomplete="off"
         />
+      <input type="password" name="password" id="password" placeholder="Password" autocomplete="off" />
       </div>
+      <input type="hidden" name="userLogged" value="<%= userLogged %>" />
+      <input type="hidden" name="paragraphMode" value="<%= paragraphMode %>" />
       <input type="hidden" name="resultPassage" value="<%= JSON.stringify(myPassage) %>" />
       <button type="submit">Log In</button>
     </form>
+    <% } %>
     <% if(!locals.userLogged) { %>
     <form class="container" action="/register" method="post">
       <input type="text" name="user" id="username" placeholder="User Name" autocomplete="off" />  
@@ -158,7 +162,7 @@
     </form>
     <% } %>
 
-    <% }; %>
+    
       <!-- ********************************************************************************************-->
     </div>
 

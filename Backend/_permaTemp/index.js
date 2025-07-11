@@ -17,6 +17,9 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
+    cookie: {
+      maxAge: 100*60*60*24,
+    }
   })
 );
 
@@ -91,8 +94,25 @@ app.get("/failure", (req, res) => {
   res.render("failure.ejs");
 });
 
-app.get("/success", (req, res) => {
-  res.render("success.ejs");
+app.get("/success", async (req, res) => {
+  if(req.isAuthenticated()) {
+    const resultVerses = await thumperSearch(sSearch);
+    const resultUsers = await thumperSearch(uSearch);
+    console.log("resultUsers:");
+    console.log(resultUsers);
+    userLogged = true;
+      res.render("index.ejs", {
+      myPassage: resultVerses,
+      myVerses: resultVerses,
+      userLogged: userLogged,
+      myUsers: resultUsers,
+      badUser: badUser,
+      paragraphMode: paragraphMode,
+    });
+    
+  } else {
+    res.redirect("/failure");
+  }
 });
 
 app.post("/submit", async (req, res) => {
@@ -227,7 +247,6 @@ app.post("/usersubmit", async (req, res) => {
 app.post("/logout", async (req, res) => {
   try {
     paragraphMode = JSON.parse(req.body.paragraphMode);
-    console.log("CM: " + paragraphMode);
     var myResults = JSON.parse(req.body.resultPassage); // necessary when bringing arrays back thru html forms via hidden elements
     userLogged = false;
     res.render("index.ejs", { myPassage: myResults, userLogged: userLogged, paragraphMode: paragraphMode });
@@ -285,15 +304,13 @@ app.post("/register", async (req, res) => {
 
 passport.use(
   new Strategy(async function verify(username, password, cb) {
-    console.log("Hi!");
     try {
-      const result = await db.query("SELECT * FROM thusers WHERE username = $1 ", [
+      const result = await db.query("SELECT * FROM thuser WHERE username = $1 ", [
         username,
       ]);
       if (result.rows.length > 0) {
-        const user = result.rows[0];
-        
-        const storedHashedPassword = user.password;
+        const user = result.rows[0];        
+        const storedHashedPassword = user.hashtag;
         bcrypt.compare(password, storedHashedPassword, (err, valid) => {
           if (err) {
             //Error with password check
@@ -330,9 +347,3 @@ app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
 
-// Changelog:
-// 2025.07.02 First real search available
-// 2025.07.03 Added book_stats table and JOINed for lookup of Jas to James
-//            Added title "From the book of..." header
-//            Added copy button to the ejs page
-//            Added ability to enter Jas or James, handled two-space entries such as '2 Timothy 3:16'
