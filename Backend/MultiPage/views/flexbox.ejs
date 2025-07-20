@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thumper</title>
+    <link rel="stylesheet" href="/styles/flextest.css" />
+</head>
+<body>
+
+<div class="split-container">
+  <div class="pane left" id="leftPane">
+    <%- include("search.ejs") %>
+    <%- include("lists.ejs") %>
+    <%- include("verselist.ejs") %>
+  </div>
+
+  <div class="resizer" id="resizer"></div>
+
+  <div class="pane right" id="rightPane">
+      <%- include("content.ejs") %>
+  </div>
+</div>
+
+<script>
+      document
+        .getElementById("copyButton")
+        ?.addEventListener("click", async function () {
+          const verseElement = document.getElementById("verseText");
+          const html = verseElement.innerHTML;
+
+          try {
+            await navigator.clipboard.write([
+              new ClipboardItem({
+                "text/html": new Blob([html], { type: "text/html" }),
+                "text/plain": new Blob([verseElement.innerText], {
+                  type: "text/plain",
+                }),
+              }),
+            ]);
+          } catch (err) {
+            alert("Failed to copy: " + err);
+          }
+        });
+    </script>
+
+<script>
+  const resizer = document.getElementById('resizer');
+  const leftPane = document.getElementById('leftPane');
+
+  let isDragging = false;
+
+  resizer.addEventListener('mousedown', function (e) {
+    isDragging = true;
+    document.body.style.cursor = 'ew-resize';
+  });
+
+  document.addEventListener('mousemove', function (e) {
+    if (!isDragging) return;
+    const containerOffsetLeft = document.querySelector('.split-container').offsetLeft;
+    const newLeftWidth = e.clientX - containerOffsetLeft;
+    leftPane.style.width = newLeftWidth + 'px';
+  });
+
+  document.addEventListener('mouseup', function () {
+    isDragging = false;
+    document.body.style.cursor = '';
+  });
+</script>
+
+</body>
+</html>

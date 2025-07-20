@@ -1,3 +1,9 @@
-<% if(locals.myVerse) { %>
-    <%= myVerse %>
-<% } %>
+<!-- Select Current List -->
+<div class="container">
+  <form action="/usersubmit" method="POST">
+    <label for="menu">Current List:</label>
+    <input type="hidden" name="listChanged" value="true" />
+    <br /><br />
+    <button type="submit">Submit</button>
+  </form>
+</div>

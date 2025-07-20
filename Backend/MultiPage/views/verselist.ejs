@@ -1,0 +1,25 @@
+<!-- List and Delete Verses from Current List -->
+<div class="container">
+  <p>Verses for Current List:</p>
+  <form action="/usersubmit" method="POST">
+    <!-- Do some checking later to make sure I'm allowed to delete! -->
+    <br />
+    <button type="submit">Delete</button>
+  </form>
+</div>
+
+<div class="container">
+  <!-- Add Verses to Current List -->
+  <form action="/usersubmit" method="post">
+    <div class="div-spacing">
+      <input
+        type="text"
+        name="addverse"
+        id="addVerse"
+        placeholder="Add Verse"
+      />
+    </div>
+    <!-- <br>Do some checking later to make sure I'm allowed to add!<br> -->
+    <div class="div-spacing"><button type="submit">Add</button></div>
+  </form>
+</div>

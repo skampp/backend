@@ -1,5 +1,20 @@
-<form action="/search" method="POST">
-    <input type="text" name="searchValue" />
-    <input type="hidden" name="resultPassage" value="Jam.1.1" />
-    <button type="submit">Submit</button>
-</form>
+<!-- Search and Copy -->
+<div class="container">
+  <form action="/submit" method="post">
+    <div class="div-spacing">
+      <input
+        type="text"
+        name="answer"
+        id="userInput"
+        placeholder="Bible reference"
+        autofocus
+      />
+    </div>
+    <div class="div-spacing"><button type="submit">Thumper Search</button></div>
+    <div class="div-spacing">
+      <button id="copyButton" class="narrow-button" type="button">
+        Copy Passage
+      </button>
+    </div>
+  </form>
+</div>
