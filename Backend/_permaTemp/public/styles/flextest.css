@@ -27,7 +27,7 @@ button {
   overflow-y: auto;     /* enables vertical scroll */
   max-height: 200px;    /* or use fixed height */
   padding: 1em;
-  border: 1px solid #ccc;
+  /* border: 1px solid #ccc; */
 }
 
 .container {
